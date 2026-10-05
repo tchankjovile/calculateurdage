@@ -4,16 +4,69 @@
              x:Class="CalculateurAGE.MainPage"
              Title="Calculateur">
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="12">
-            <Label Text="Nom" FontSize="16"/>
-            <Entry Text="{Binding Nom, Mode=TwoWay}"
-                   Placeholder="Votre nom"/>
-            <Label Text="Date de naissance" FontSize="16"/>
-            <DatePicker Date="{Binding DateNaissance, Mode=TwoWay}"/>
-            <Button Text="Calculer"
-                    Command="{Binding CalculerCommand}"/>
-            <Label Text="{Binding Resultat}" FontSize="20"
-                   IsVisible="{Binding ResultatVisible}"/>
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- En-tête -->
+            <Label Text="Calculateur d'âge"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   HorizontalOptions="Center"/>
+            <Label Text="Entrez votre nom et votre date de naissance"
+                   FontSize="14"
+                   TextColor="{StaticResource Gray500}"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"/>
+
+            <!-- Carte de saisie -->
+            <Border Padding="16"
+                    StrokeThickness="1"
+                    Stroke="{StaticResource Gray200}"
+                    StrokeShape="RoundRectangle 12"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Nom" FontSize="16" FontAttributes="Bold"/>
+                    <Entry Text="{Binding Nom, Mode=TwoWay}"
+                           Placeholder="Votre nom"/>
+                    <Label Text="Date de naissance" FontSize="16" FontAttributes="Bold"/>
+                    <DatePicker Date="{Binding DateNaissance, Mode=TwoWay}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Boutons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Grid.Column="0"
+                        Text="Calculer"
+                        CornerRadius="10"
+                        Command="{Binding CalculerCommand}"/>
+                <Button Grid.Column="1"
+                        Text="Effacer"
+                        CornerRadius="10"
+                        BackgroundColor="{StaticResource Gray500}"
+                        TextColor="{StaticResource White}"
+                        Command="{Binding EffacerCommand}"/>
+            </Grid>
+
+            <!-- Carte de résultat -->
+            <Border Padding="16"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12"
+                    BackgroundColor="{StaticResource Secondary}"
+                    IsVisible="{Binding ResultatVisible}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding Resultat}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Tertiary}"/>
+                    <Label Text="{Binding Message}"
+                           FontSize="17"
+                           TextColor="Green"/>
+                    <Label Text="{Binding JoursAnniversaire}"
+                           FontSize="16"
+                           TextColor="{StaticResource Gray900}"/>
+                </VerticalStackLayout>
+            </Border>
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

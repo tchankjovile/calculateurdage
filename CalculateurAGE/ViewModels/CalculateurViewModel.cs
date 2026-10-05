@@ -1,15 +1,14 @@
-namespace CalculateurAGE.ViewModels;
+﻿namespace CalculateurAGE.ViewModels;
 
 public class CalculateurViewModel : BaseViewModel
 {
-    // Contient l'ÉTAT de l'écran et les ACTIONS possibles.
-    // Champs privés : la vraie donnée.
     private string _nom = "";
     private DateTime _dateNaissance = DateTime.Today.AddYears(-20);
     private string _resultat = "";
+    private string _message = "";
+    private string _joursAnniversaire = "";
     private bool _resultatVisible;
 
-    // Propriétés publiques : ce que le XAML voit.
     public string Nom
     {
         get => _nom;
@@ -32,29 +31,82 @@ public class CalculateurViewModel : BaseViewModel
         set => SetField(ref _resultat, value);
     }
 
+    // Fonctionnalité 1 : Majeur / Mineur
+    public string Message
+    {
+        get => _message;
+        set => SetField(ref _message, value);
+    }
+
+    // Fonctionnalité 3 : jours avant le prochain anniversaire
+    public string JoursAnniversaire
+    {
+        get => _joursAnniversaire;
+        set => SetField(ref _joursAnniversaire, value);
+    }
+
     public bool ResultatVisible
     {
         get => _resultatVisible;
         set => SetField(ref _resultatVisible, value);
     }
 
-    // Lié à Button.Command dans le XAML.
     public RelayCommand CalculerCommand { get; }
+
+    // Fonctionnalité 2 : Effacer
+    public RelayCommand EffacerCommand { get; }
 
     public CalculateurViewModel()
     {
         CalculerCommand = new RelayCommand(
             Calculer,
             () => !string.IsNullOrWhiteSpace(Nom));
+
+        EffacerCommand = new RelayCommand(Effacer);
     }
 
-    // La logique métier : aucun contrôle d'interface ici.
     private void Calculer()
     {
         int age = DateTime.Today.Year - DateNaissance.Year;
         if (DateNaissance.Date > DateTime.Today.AddYears(-age)) age--;
 
         Resultat = $"{Nom}, vous avez {age} ans";
+        Message = age >= 18 ? "Statut : Majeur" : "Statut : Mineur";
+
+        int jours = JoursAvantAnniversaire();
+        JoursAnniversaire = jours == 0
+            ? "Joyeux anniversaire aujourd'hui !"
+            : $"Prochain anniversaire dans {jours} jour(s)";
+
         ResultatVisible = true;
+    }
+
+    private int JoursAvantAnniversaire()
+    {
+        DateTime today = DateTime.Today;
+        DateTime prochain = AnniversairePourAnnee(today.Year);
+        if (prochain < today)
+            prochain = AnniversairePourAnnee(today.Year + 1);
+        return (prochain - today).Days;
+    }
+
+    // Gère le 29 février les années non bissextiles.
+    private DateTime AnniversairePourAnnee(int annee)
+    {
+        int jour = DateNaissance.Day;
+        if (DateNaissance.Month == 2 && jour == 29
+            && !DateTime.IsLeapYear(annee))
+            jour = 28;
+        return new DateTime(annee, DateNaissance.Month, jour);
+    }
+
+    private void Effacer()
+    {
+        Nom = "";
+        DateNaissance = DateTime.Today.AddYears(-20);
+        Resultat = "";
+        Message = "";
+        JoursAnniversaire = "";
+        ResultatVisible = false;
     }
 }
